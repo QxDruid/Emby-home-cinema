@@ -1,0 +1,6 @@
+---
+# handlers file for hfs
+- name: restart nfs
+  systemd:
+    name: nfs-kernel-server
+    state: restarted

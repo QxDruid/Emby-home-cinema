@@ -1,0 +1,7 @@
+  - name: append line to config
+    lineinfile:
+      path: /etc/exports
+      insertbefore: BOF
+      line: "/{{ nfs_share_name }}    {{ nfs_client_ip }}(rw,sync,no_subtree_check,anongid=2000)"
+    notify: restart nfs
+  

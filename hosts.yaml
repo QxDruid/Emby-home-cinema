@@ -1,0 +1,11 @@
+all:
+  children:
+    nfs:
+      hosts:
+        192.168.10.20     
+    emby:
+      hosts:
+         192.168.10.21
+    transmission:
+      hosts:
+         192.168.10.22

@@ -1,0 +1,37 @@
+---
+
+
+- name: Install nfs server
+  hosts:
+    - nfs
+  remote_user: vagrant
+  become: yes
+  vars:
+    ansible_ssh_private_key_file: /home/savelyev/devops/ansible-Plex/.vagrant/machines/nfs/virtualbox/private_key
+    ansible_user: vagrant
+  vars_files:
+    varfile.yaml
+  tasks:
+  - include_role:
+      name: nfs
+      tasks_from: server_install
+
+
+
+- name: Install nfs client
+  hosts:
+    - plex
+  remote_user: vagrant
+  become: yes
+  vars:
+    ansible_ssh_private_key_file: /home/savelyev/devops/ansible-Plex/.vagrant/machines/plex/virtualbox/private_key
+    ansible_user: vagrant
+  vars_files:
+    varfile.yaml
+  tasks:
+  - include_role:
+      name: nfs
+      tasks_from: client_install
+      
+  - include_role:
+      name: plex

@@ -1,0 +1,11 @@
+nfs_clients:
+  emby:
+    ip: 10.0.0.2
+  transmission:
+    ip: 10.0.0.3
+
+nfs_server_ip: 10.0.0.1
+nfs_share_name: share
+nfs_group: nfs_group
+nfs_user: nfs_user
+nfs_user_uid_gid: 2000

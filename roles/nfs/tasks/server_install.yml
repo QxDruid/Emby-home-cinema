@@ -1,0 +1,28 @@
+---
+# tasks file for hfs
+  - name: Install NFS server
+    apt:
+      name: nfs-kernel-server
+      state: present      
+      update_cache: yes
+
+  - name: create nfs group
+    group:
+      name: "{{ nfs_group }}"
+      state: present
+      gid: "{{ nfs_user_uid_gid }}"
+
+  - name: create user {{ nfs_user }} with group {{ nfs_group }}  
+    ansible.builtin.user:
+      name: "{{ nfs_user }}"
+      comment: John Doe
+      uid: "{{ nfs_user_uid_gid }}"
+      group: admin
+
+  - name: Creates directory
+    file:
+      path: "/{{ nfs_share_name }}"
+      state: directory
+      owner: "{{ nfs_user }}"
+      group: "{{ nfs_group }}"
+      mode: 0775

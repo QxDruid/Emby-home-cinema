@@ -1,0 +1,42 @@
+---
+# tasks file for hfs
+  - name: Install NFS client
+    apt:
+      name: nfs-common
+      state: present      
+      update_cache: yes
+
+  - name: create nfs group
+    group:
+      name: "{{ nfs_group }}"
+      state: present
+      gid: "{{ nfs_user_uid_gid }}"
+
+  - name: "Adding group {{ nfs_group }} to user {{ nfs_user }}"  
+    user: 
+      name: "{{ nfs_user }}"
+      groups: "{{ nfs_group }}"
+      append: yes
+
+  - name: Check directory
+    stat:
+      path: "/{{ nfs_share_name }}"
+    register: my_folder
+ 
+  - name: Creates directory
+    file:
+      path: "/{{ nfs_share_name }}"
+      state: directory
+      owner: "{{ nfs_user }}"
+      group: "{{ nfs_group }}"
+      mode: 2775
+    when: my_folder.stat.exists == false
+
+
+  - name: mount network share
+    ansible.posix.mount:
+      src: "{{ nfs_server_ip }}:/{{ nfs_share_name }}"
+      path: "/{{ nfs_share_name }}"
+      fstype: nfs
+      opts: 'rw,sync'
+      state: mounted
