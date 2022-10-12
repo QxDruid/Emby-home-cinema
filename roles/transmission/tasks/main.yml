@@ -1,2 +1,14 @@
 ---
 # tasks file for transmission
+  - name: Add repo transmission
+    ansible.builtin.apt_repository:
+      repo: ppa:transmissionbt/ppa
+
+  - name: install transmission
+    apt:
+      pkg:
+      - transmission-cli 
+      - transmission-common 
+      - transmission-daemon
+      state: present
+      update_cache: yes
