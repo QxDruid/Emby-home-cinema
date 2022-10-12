@@ -1,13 +1,12 @@
 ---
 
-
 - name: Install nfs server
   hosts:
     - nfs
   remote_user: vagrant
   become: yes
   vars:
-    ansible_ssh_private_key_file: /home/savelyev/devops/ansible-Plex/.vagrant/machines/nfs/virtualbox/private_key
+    ansible_ssh_private_key_file: "{{ ssh_key_nfs }}"
     ansible_user: vagrant
   vars_files:
     varfile.yaml
@@ -15,23 +14,65 @@
   - include_role:
       name: nfs
       tasks_from: server_install
-
-
-
-- name: Install nfs client
+  
+- name: Configure nfs users
   hosts:
-    - plex
+    - nfs
   remote_user: vagrant
   become: yes
   vars:
-    ansible_ssh_private_key_file: /home/savelyev/devops/ansible-Plex/.vagrant/machines/plex/virtualbox/private_key
+    ansible_ssh_private_key_file: "{{ ssh_key_nfs }}"
     ansible_user: vagrant
+    
+  vars_files:
+    varfile.yaml
+  tasks:
+  - include_role:
+      name: nfs
+      tasks_from: config_users
+    vars:
+      nfs_client_ip: "{{ item.ip }}"
+      nfs_client_user: "{{ item.name }}"
+      nfs_client_user_uid: "{{ item.uid }}"
+    with_items:
+    - "{{ nfs_clients.emby }}"
+    - "{{ nfs_clients.transmission }}"
+
+- name: Emby install
+  hosts:
+    - emby
+  remote_user: vagrant
+  become: yes
+  vars:
+    ansible_ssh_private_key_file: "{{ ssh_key_emby }}"
+    ansible_user: vagrant
+    nfs_client_user: "{{nfs_clients.emby.name}}"
+    nfs_client_user_uid: "{{nfs_clients.emby.uid}}"
   vars_files:
     varfile.yaml
   tasks:
   - include_role:
       name: nfs
       tasks_from: client_install
-      
+    
   - include_role:
-      name: plex
+      name: emby
+
+- name: Transmission install
+  hosts:
+    - transmission
+  remote_user: vagrant
+  become: yes
+  vars:
+    ansible_ssh_private_key_file: "{{ ssh_key_transmission }}"
+    ansible_user: vagrant
+    nfs_client_user: "{{nfs_clients.transmission.name}}"
+    nfs_client_user_uid: "{{nfs_clients.transmission.uid}}"
+  vars_files:
+    varfile.yaml
+  tasks:
+  - include_role:
+      name: transmission
+  - include_role:
+      name: nfs
+      tasks_from: client_install
