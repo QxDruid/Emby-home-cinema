@@ -1,0 +1,27 @@
+---
+- name: Install nfs server
+  hosts:
+    - nfs
+  tasks:
+  - include_role:
+      name: nfs
+      tasks_from: server_install
+  become: yes
+  
+- name: Emby install
+  hosts:
+    - emby
+  tasks:  
+  - include_role:
+      name: emby
+  become: yes
+
+- name: Transmission install
+  hosts:
+    - transmission
+  tasks:
+  - include_role:
+      name: transmission
+  become: yes
+
+
