@@ -2,6 +2,16 @@
     lineinfile:
       path: /etc/exports
       insertbefore: BOF
-      line: "/{{ nfs_share_name }}    {{ nfs_client_ip }}(rw,sync,no_subtree_check,anongid=2000)"
+      line: "/{{ nfs_share_name }}    {{ nfs_client_ip }}(rw,sync,no_subtree_check,anongid=2000,anonuid=2000)"
     notify: restart nfs
   
+  - name: create user
+    user:
+      name: "{{ nfs_client_user }}"
+      uid: "{{ nfs_client_user_uid }}"
+      group: "{{ nfs_group }}"
+      state: present
+      shell: /usr/sbin/nologin      # Defaults to /bin/bash
+      system: yes             # Defaults to no
+      createhome: no        # Defaults to yes
+    notify: restart nfs

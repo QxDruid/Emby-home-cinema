@@ -15,7 +15,6 @@
   - name: create user {{ nfs_user }} with group {{ nfs_group }}  
     ansible.builtin.user:
       name: "{{ nfs_user }}"
-      comment: John Doe
       uid: "{{ nfs_user_uid_gid }}"
       group: admin
 

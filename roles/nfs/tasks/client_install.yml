@@ -6,28 +6,32 @@
       state: present      
       update_cache: yes
 
-  - name: create nfs group
+  - name: create nfs group-"{{ nfs_group }}" gid-"{{ nfs_user_uid_gid }}"
     group:
       name: "{{ nfs_group }}"
       state: present
       gid: "{{ nfs_user_uid_gid }}"
 
-  - name: "Adding group {{ nfs_group }} to user {{ nfs_user }}"  
-    user: 
-      name: "{{ nfs_user }}"
-      groups: "{{ nfs_group }}"
-      append: yes
+  - name: create nfs user-"{{ nfs_client_user }}" uid-"{{ nfs_client_user_uid }}"
+    user:
+      name: "{{ nfs_client_user }}"
+      uid: "{{ nfs_client_user_uid }}"
+      group: "{{ nfs_group }}"
+      state: present
+      shell: /usr/sbin/nologin      # Defaults to /bin/bash
+      system: yes             # Defaults to no
+      createhome: no        # Defaults to yes
 
   - name: Check directory
     stat:
       path: "/{{ nfs_share_name }}"
     register: my_folder
  
-  - name: Creates directory
+  - name: Creates directory owner- "{{ nfs_client_user }}"-"{{ nfs_group }}"
     file:
       path: "/{{ nfs_share_name }}"
       state: directory
-      owner: "{{ nfs_user }}"
+      owner: "{{ nfs_client_user }}"
       group: "{{ nfs_group }}"
       mode: 2775
     when: my_folder.stat.exists == false
