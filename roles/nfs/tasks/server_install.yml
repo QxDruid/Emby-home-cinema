@@ -10,18 +10,11 @@
     group:
       name: "{{ nfs_group }}"
       state: present
-      gid: "{{ nfs_user_uid_gid }}"
-
-  - name: create user {{ nfs_user }} with group {{ nfs_group }}  
-    ansible.builtin.user:
-      name: "{{ nfs_user }}"
-      uid: "{{ nfs_user_uid_gid }}"
-      group: admin
+      gid: "{{ nfs_gid }}"
 
   - name: Creates directory
     file:
       path: "/{{ nfs_share_name }}"
       state: directory
-      owner: "{{ nfs_user }}"
       group: "{{ nfs_group }}"
       mode: 0775
