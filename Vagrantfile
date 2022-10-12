@@ -16,6 +16,13 @@ Vagrant.configure("2") do |config|
       vb.memory = 512
       vb.cpus = 1  
     end
+    nfs.vm.provision "shell" do |s|
+      ssh_pub_key = File.readlines("/.ssh/vagrant.pub").first.strip
+      s.inline= <<-SHELL 
+        echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+        echo #{ssh_pub_key} >> /root/.ssh/authorized_keys
+      SHELL
+    end
   end
 
 # -----------------------------------------------------------------------------------------------------
@@ -32,6 +39,13 @@ Vagrant.configure("2") do |config|
       vb.memory = 512
       vb.cpus = 1
     end
+    emby.vm.provision "shell" do |s|
+      ssh_pub_key = File.readlines("/.ssh/vagrant.pub").first.strip
+      s.inline= <<-SHELL 
+        echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+        echo #{ssh_pub_key} >> /root/.ssh/authorized_keys
+      SHELL
+    end
   end
 
   # Creates transmission VM
@@ -46,6 +60,13 @@ Vagrant.configure("2") do |config|
       vb.name = "transmission"
       vb.memory = 512
       vb.cpus = 1
+    end
+    tsm.vm.provision "shell" do |s|
+      ssh_pub_key = File.readlines("/.ssh/vagrant.pub").first.strip
+      s.inline= <<-SHELL 
+        echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+        echo #{ssh_pub_key} >> /root/.ssh/authorized_keys
+      SHELL
     end
   end
 
