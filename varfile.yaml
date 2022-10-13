@@ -1,11 +1,21 @@
+ansible_user: vagrant
+ssh_key: /.ssh/vagrant
+remote_user: vagrant
+gather_facts: False
+
+nfs_group: nfs_group
+nfs_gid: 2000
+
+nfs_server_ip: 192.168.10.20
+nfs_share_name: share
 nfs_clients:
   emby:
-    ip: 10.0.0.2
+    name: emby
+    uid: 1051
+    ip: 192.168.10.21
   transmission:
-    ip: 10.0.0.3
+    name: debian-transmission
+    uid: 1052
+    ip: 192.168.10.22
 
-nfs_server_ip: 10.0.0.1
-nfs_share_name: share
-nfs_group: nfs_group
-nfs_user: nfs_user
-nfs_user_uid_gid: 2000
+transmission_access_from: 192.168.10.*
