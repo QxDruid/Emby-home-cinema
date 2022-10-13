@@ -21,5 +21,11 @@
       path: /etc/transmission-daemon/settings.json
       regexp: '^(.*)"rpc-whitelist"'
       line: '    "rpc-whitelist": "127.0.0.1,{{transmission_access_from}}",'
+
+  - name: "set umask 002"
+    lineinfile:
+      path: /etc/transmission-daemon/settings.json
+      regexp: '^(.*)"umask"'
+      line: '    "umask": 2,'
     notify: start transmission
 

@@ -17,4 +17,4 @@
       path: "/{{ nfs_share_name }}"
       state: directory
       group: "{{ nfs_group }}"
-      mode: 0775
+      mode: 2775
