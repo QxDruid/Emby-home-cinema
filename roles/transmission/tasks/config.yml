@@ -1,0 +1,24 @@
+---
+# tasks file for transmission
+  - name: add chmod g+rw to config folders
+    file:
+      path: "{{ item }}"
+      state: directory      
+      mode: g+rw
+      recurse: yes
+    with_items:
+      - /var/lib/transmission-daemon/
+      - /etc/transmission-daemon/
+
+  - name: "change download folder to {{nfs_share_name}})"
+    lineinfile:
+      path: /etc/transmission-daemon/settings.json
+      regexp: '^(.*)"download-dir'
+      line: '    "download-dir": "/{{nfs_share_name}}",'
+
+  - name: "add web acccess from 192.168.10.*"
+    lineinfile:
+      path: /etc/transmission-daemon/settings.json
+      regexp: '^(.*)"rpc-whitelist"'
+      line: '    "rpc-whitelist": "127.0.0.1,{{transmission_access_from}}",'
+
