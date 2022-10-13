@@ -1,2 +1,12 @@
 ---
 # handlers file for emby
+- name: stop
+  systemd:
+    name: emby-server
+    state: stopped
+
+- name: start
+  systemd:
+    name: emby-server
+    state: started
+    enabled: yes

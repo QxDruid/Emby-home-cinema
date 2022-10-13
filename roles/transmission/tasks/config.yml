@@ -21,4 +21,5 @@
       path: /etc/transmission-daemon/settings.json
       regexp: '^(.*)"rpc-whitelist"'
       line: '    "rpc-whitelist": "127.0.0.1,{{transmission_access_from}}",'
+    notify: start transmission
 

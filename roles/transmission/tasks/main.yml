@@ -12,3 +12,15 @@
       - transmission-daemon
       state: present
       update_cache: yes
+    
+  - name: stop transmission
+    systemd:
+      name: transmission-daemon
+      state: stopped
+      
+  - name: set transmission uid
+    user:
+      name: debian-transmission
+      uid: "{{ nfs_clients.transmission.uid }}"
+      state: present
+    notify: start transmission

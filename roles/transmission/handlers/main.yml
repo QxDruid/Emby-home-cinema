@@ -1,2 +1,13 @@
 ---
 # handlers file for transmission
+
+- name: stop transmission
+  systemd:
+    name: transmission-daemon
+    state: stopped
+
+- name: start transmission
+  systemd:
+    name: transmission-daemon
+    state: started
+    enabled: yes

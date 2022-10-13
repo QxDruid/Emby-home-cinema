@@ -8,3 +8,15 @@
   - name: Install Emby deb
     apt:
       deb: /tmp/emby-server-deb_4.7.8.0_amd64.deb
+    
+  - name: stop
+    systemd:
+      name: emby-server
+      state: stopped
+
+  - name: set emby uid
+    user:
+      name: emby
+      uid: "{{ nfs_clients.emby.uid }}"
+      state: present
+    notify: start
