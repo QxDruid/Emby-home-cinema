@@ -1,4 +1,5 @@
 ---
+############################ Install Section ################################
 - name: Install nfs server
   hosts:
     - nfs
@@ -7,6 +8,9 @@
       name: nfs
       tasks_from: server_install
   become: yes
+  tags:
+    - install
+    - nfs
   
 - name: Emby install
   hosts:
@@ -15,6 +19,10 @@
   - include_role:
       name: emby
   become: yes
+  tags:
+    - install 
+    - emby
+
 
 - name: Transmission install
   hosts:
@@ -23,5 +31,77 @@
   - include_role:
       name: transmission
   become: yes
+  tags:
+    - install
+    - transmission
 
 
+ 
+############################ Config Section ################################
+- name: Config nfs server
+  hosts:
+    - nfs
+  tasks:
+  - include_role:
+      name: nfs
+      tasks_from: config_users
+    vars:
+        nfs_client_ip: "{{ item.ip }}"
+        nfs_client_user: "{{ item.name }}"
+        nfs_client_user_uid: "{{ item.uid }}"
+    with_items:
+    - "{{ nfs_clients.emby }}"
+    - "{{ nfs_clients.transmission }}"
+  become: yes
+  tags:
+  - config
+  - nfs
+
+- name: Config emby nfs mount
+  hosts:
+    - emby
+  tasks:
+  - include_role:
+      name: nfs
+      tasks_from: client_install
+  - name: Appending the group "{{ nfs_group }}" to the emby user's groups
+    user:
+      name: emby
+      groups: "{{ nfs_group }}"
+      append: yes
+  become: yes
+  tags:
+  - config
+  - emby
+
+- name: Config transmission nfs mount
+  hosts:
+    - transmission
+  tasks:
+  - include_role:
+      name: nfs
+      tasks_from: client_install
+  - name: Appending the group "{{ nfs_group }}" to the debian-transmission user's groups
+    user:
+      name: debian-transmission
+      groups: "{{ nfs_group }}"
+      append: yes
+  become: yes
+  tags:
+  - config
+  - transmission
+
+- name: Config transmission file access
+  become: yes
+  hosts: transmission
+  tasks:
+  - name: stop transmission before change settings
+    systemd:
+      name: transmission-daemon
+      state: stopped
+  - include_role:
+      name: transmission
+      tasks_from: config
+  tags:
+  - config
+  - transmission
